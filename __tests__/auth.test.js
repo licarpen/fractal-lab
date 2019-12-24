@@ -62,6 +62,29 @@ describe('app authentication routes', () => {
         expect(res.body).toEqual({ message: 'Invalid email/password', status: 401 });
       });
   });
+
+  it('verifies that a user is logged in', async() => {
+    const user = await User.create({
+      email: 'me@me.com',
+      password: '123',
+      role: 'user'
+    });
+    const agent = request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'me@me.com', password: '123' });
+
+    return agent
+      .get('/api/v1/auth/verify')
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: user.id,
+          email: 'me@me.com',
+          role: 'user',
+          __v: 0
+        });
+      });
+  });
 });
 
 

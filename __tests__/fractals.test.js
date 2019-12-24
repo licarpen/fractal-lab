@@ -40,8 +40,18 @@ describe('app fractal routes', () => {
     return mongoose.connection.close();
   });
 
-  it('creates a fractal', () => {
-    return request(app)
+  it('creates a fractal', async() => {
+    const user = await User.create({
+      email: 'admin@admin.com',
+      password: '123',
+      role: 'admin'
+    });
+    const agent = request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'admin@admin.com', password: '123' });
+
+    return agent
       .post('/api/v1/fractals')
       .send({
         name: 'koch snowflake',
