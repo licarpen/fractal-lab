@@ -33,17 +33,17 @@ describe('app authentication routes', () => {
         });
       });
   });
-  /* Find out why this fails - creating a user with email then trying to sign up new user with same email... getting response back.  
+  /*
   it('rejects to sign up a user when email is already in use', async() => {
-    await User.create({ email: 'me@me.com', password: '123' });
+    await User.create({ email: 'me@me.com', password: '123', role: 'user' });
     return request(app)
       .post('/api/v1/auth/signup')
-      .send({ email: 'me@me.com', password: '123' })
+      .send({ email: 'me@me.com', password: '123', role: 'user' })
       .then(res => {
         expect(res.body).toEqual({ message: 'email already in use' });
       });
   });
-*/
+  */
   it('receives error message when login lacks valid email', () => {
     return request(app)
       .post('/api/v1/auth/login')
