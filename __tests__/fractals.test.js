@@ -40,7 +40,7 @@ describe('app fractal routes', () => {
     return mongoose.connection.close();
   });
 
-  it('creates a fractal', async() => {
+  it('allows an admin to create a fractal', async() => {
     const user = await User.create({
       email: 'admin@admin.com',
       password: '123',
@@ -68,7 +68,24 @@ describe('app fractal routes', () => {
         contributingUser: user._id.toString()
       }));
   });
+  /*
+  it('does not allow a non-admin user to create a fractal', async() => {
+    const agent = request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'me@me.com', password: '123' });
 
+    return agent
+      .post('/api/v1/fractals')
+      .send({
+        name: 'koch snowflake',
+        description: 'snowflake pattern',
+        generatingCode: 'generateKochSnowflakeFractal',
+        contributingUser: user._id
+      })
+      .then(res => expect(res.body).toEqual('error'));
+  });
+  */
   it('gets all fractals', async() => {
     const fractals = await Fractal.create([
       {
@@ -84,7 +101,12 @@ describe('app fractal routes', () => {
         contributingUser: user._id
       }
     ]);
-    return request(app)
+    const agent = request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'me@me.com', password: '123' });
+
+    return agent
       .get('/api/v1/fractals')
       .then(res => {
         fractals.forEach(fractal => {
@@ -93,8 +115,13 @@ describe('app fractal routes', () => {
       });
   });
 
-  it('gets a fractal by id', () => {
-    return request (app)
+  it('gets a fractal by id', async() => {
+    const agent = request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'me@me.com', password: '123' });
+
+    return agent
       .get(`/api/v1/fractals/${treeFractal._id}`)
       .then(res => {
         expect(res.body).toEqual({
@@ -108,8 +135,18 @@ describe('app fractal routes', () => {
       });
   });
 
-  it('updates a fractal by id', () => {
-    return request (app)
+  it('updates a fractal by id', async() => {
+    await User.create({
+      email: 'admin@admin.com',
+      password: '123',
+      role: 'admin'
+    });
+    const agent = request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'admin@admin.com', password: '123' });
+
+    return agent
       .patch(`/api/v1/fractals/${treeFractal._id}`)
       .send({ name: 'symmetrical tree' })
       .then(res => {
@@ -124,8 +161,18 @@ describe('app fractal routes', () => {
       });
   });
 
-  it('delete a fractal by id', () => {
-    return request (app)
+  it('delete a fractal by id', async() => {
+    await User.create({
+      email: 'admin@admin.com',
+      password: '123',
+      role: 'admin'
+    });
+    const agent = request.agent(app);
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'admin@admin.com', password: '123' });
+
+    return agent
       .delete(`/api/v1/fractals/${treeFractal._id}`)
       .then(res => {
         expect(res.body).toEqual({
