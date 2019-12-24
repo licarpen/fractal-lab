@@ -24,7 +24,8 @@ describe('app fractal routes', () => {
     user = await User
       .create({
         email: 'me@me.com',
-        password: '123'
+        password: '123',
+        role: 'user'
       });
     treeFractal = await Fractal
       .create({

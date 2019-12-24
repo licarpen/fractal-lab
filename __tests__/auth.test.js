@@ -22,13 +22,14 @@ describe('app authentication routes', () => {
   it('signs up a user', () => {
     return request(app)
       .post('/api/v1/auth/signup')
-      .send({ email: 'me@me.com', password: '123' })
+      .send({ email: 'me@me.com', password: '123', role: 'user' })
       .then(res => {
         expect(res.header['set-cookie'][0]).toEqual(expect.stringContaining('session='));
         expect(res.body).toEqual({ 
           _id: expect.any(String),
           email: 'me@me.com',
-          __v: 0
+          __v: 0,
+          role: 'user'
         });
       });
   });
@@ -46,14 +47,14 @@ describe('app authentication routes', () => {
   it('receives error message when login lacks valid email', () => {
     return request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'me', password: '123' })
+      .send({ email: 'me', password: '123', role: 'user' })
       .then(res => {
         expect(res.body).toEqual({ message: 'Invalid email/password', status: 401 });
       });
   });
 
   it('receives error message when login lacks valid password', async() => {
-    await User.create({ email: 'me@me.com', password: '123' });
+    await User.create({ email: 'me@me.com', password: '123', role: 'user' });
     return request(app)
       .post('/api/v1/auth/login')
       .send({ email: 'me@me.com', password: '12' })
@@ -61,7 +62,6 @@ describe('app authentication routes', () => {
         expect(res.body).toEqual({ message: 'Invalid email/password', status: 401 });
       });
   });
-
 });
 
 
