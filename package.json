@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cookieparser": "^0.1.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
@@ -28,7 +29,7 @@
   },
   "jest": {
     "testEnvironment": "node"
-  }, 
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/licarpen/fractal-lab.git"
